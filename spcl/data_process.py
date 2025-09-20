@@ -4,7 +4,7 @@ import json
 import vocab
 import random
 from tqdm import tqdm
-from spcl.config import *
+from config import *
 from torch.utils.data import TensorDataset
 
 

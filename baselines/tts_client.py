@@ -13,9 +13,23 @@ def ensure_channel():
         channel = connection.channel()
 
 # emo: [neu], [hap], [ang], [sad]
-def call_tts(msg):
+def call_tts_benchmark(msg):
     ensure_channel()
-    message_json = json.dumps(msg)
+    payload = {
+        "messages": msg,
+        "baseline": "benchmark"
+    }
+    payload_json = json.dumps(payload)
+    channel.basic_publish(exchange='tts_input_exchange', routing_key='input', body=payload_json)
+
+def call_tts_user(msg, emo):
+    ensure_channel()
+    payload = {
+        "text": msg,
+        "emo": emo,
+        "baseline": "user"
+    }
+    message_json = json.dumps(payload)
     channel.basic_publish(exchange='tts_input_exchange', routing_key='input', body=message_json)
 
 def wait_for_finish(callback):

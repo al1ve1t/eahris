@@ -5,7 +5,7 @@ from sklearn.metrics import euclidean_distances
 from tqdm import tqdm
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, SequentialSampler
-from spcl.config import CONFIG
+from config import CONFIG
 
 
 def score_func(x, y):

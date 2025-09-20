@@ -9,6 +9,7 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit heartbeat 0"
     configs:
       - source: rabbitmq-plugins
         target: /etc/rabbitmq/enabled_plugins

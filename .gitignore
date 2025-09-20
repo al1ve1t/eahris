@@ -1,7 +1,8 @@
 config.ini
 wav2vec2_checkpoints
+.venv_*
 .venv
 venv
-tts_output
+tts_output*
 resource/*
-*/__pycache__/*
+**/__pycache__/*
