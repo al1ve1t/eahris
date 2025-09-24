@@ -40,13 +40,12 @@ class ChatMessageFromNICO(ChatMessage):
 
 class ChatHistoryRequest(BaseModel):
     chat_history: List[ChatMessage]
-    email: str
     name: str
 
 @app.post("/process_chat")
 async def process_chat(request: ChatHistoryRequest):
     chat_history = request.chat_history
-    email = request.email
+    name = request.name
     # Process request: run spcl and call eatts
     emo_history = spcl_client([chat_history])
     llm_response = llm_client.chat(chat_history[-1]["text"], chat_history)
@@ -54,7 +53,7 @@ async def process_chat(request: ChatHistoryRequest):
     payload = {
         "text": llm_response.output_text,
         "emo": emo_history[-1],
-        "email": email
+        "name": name
     }
     try:
         api_response = requests.post("http://localhost:8080/", json=payload)
@@ -67,7 +66,7 @@ async def process_chat(request: ChatHistoryRequest):
     chat_history.append(ChatMessageFromNICO(text=llm_response.output_text, emo=emo_history[-1]))
     response = {
         "chat_history": [msg.dict() for msg in chat_history],
-        "email": email
+        "name": name
     }
     headers = {
         "X-Audio-File": wav_path,
@@ -75,9 +74,9 @@ async def process_chat(request: ChatHistoryRequest):
     }
     return JSONResponse(content=response, headers=headers)
 
-@app.get("/tts_output/{email}/{output_path}")
-def get_audio(email: str, output_path: str):
-    filename_decoded = "tts_output/" + unquote(email) + "/" + output_path + ".wav"
+@app.get("/tts_output/{name}/{output_path}")
+def get_audio(name: str, output_path: str):
+    filename_decoded = "tts_output/" + unquote(name) + "/" + output_path + ".wav"
     file_path = os.path.join(os.getcwd(), filename_decoded)
     if os.path.exists(file_path):
         return FileResponse(file_path, media_type="audio/wav", filename=filename_decoded)

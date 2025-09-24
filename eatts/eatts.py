@@ -13,12 +13,12 @@ app = FastAPI()
 class Request(BaseModel):
     text: str
     emo: str
-    email: str
+    name: str
 
 @app.post("/")
 async def generate_wav(request: Request):
     unique_filename = f"output_{uuid.uuid4().hex}"
-    output_path = os.path.join(request.email, unique_filename)
+    output_path = os.path.join(request.name, unique_filename)
     synthesize_msg({"emo": request.emo, "text": request.text}, output_path="../tts_output/" + output_path + ".wav")
     return JSONResponse(content={"wav_path": output_path})
 
