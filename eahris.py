@@ -3,7 +3,6 @@ from alive_progress import alive_bar
 from llm.openai import OpenaiApi
 from spcl.spcl import spcl_run
 from baselines import tts_client
-from eval.run_speechbrain import run_speechbrain
 from playsound import playsound
 from baselines.user.api import start_backend
 from baselines.benchmark.benchmark_baseline import benchmark_baseline
