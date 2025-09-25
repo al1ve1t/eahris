@@ -12,8 +12,7 @@ MODEL_PATH = os.path.join(os.path.dirname(__file__), "../resource/eatts_checkpoi
 # Read config to determine which audio reference path to use
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), "../config.ini"))
-is_benchmark = config.getboolean("baseline", "IsBenchmarkBaseline", fallback=False)
-AUDIOREF_PATH = os.path.join(os.path.dirname(__file__), "../iemocap_refaudios" if is_benchmark else "../ravdess_refaudios")
+AUDIOREF_PATH = os.path.join(os.path.dirname(__file__), "../iemocap_refaudios")
 
 SAMPLE_RATE = 22000  # 22000 32750
 
@@ -32,11 +31,11 @@ def setup_tts(checkpoint_dir: str):
 
 model, config = setup_tts(MODEL_PATH)
 
-def synthesize(config, emo: str, text: str, output_path = None):
+def synthesize(config, emo: str, text: str, output_path = None, audioref_path = AUDIOREF_PATH):
     outputs = model.synthesize(
         text,
         config,
-        speaker_wav=os.path.join(AUDIOREF_PATH, emo + ".wav"),
+        speaker_wav=os.path.join(audioref_path, emo + ".wav"),
         gpt_cond_len=3,
         language="en",
     )
@@ -47,9 +46,9 @@ def synthesize(config, emo: str, text: str, output_path = None):
         os.makedirs(os.path.dirname(output_path))
     sf.write(output_path, raw_audio, SAMPLE_RATE)
 
-def synthesize_msg(msg, output_path=None):
+def synthesize_msg(msg, output_path=None, audioref_path=AUDIOREF_PATH):
     emo = msg["emo"]
     text = msg["text"]
     if not emo or not text:
         raise ValueError("Missing 'emo' or 'text' in the message.")
-    synthesize(config, emo, text, output_path)
+    synthesize(config, emo, text, output_path, audioref_path)

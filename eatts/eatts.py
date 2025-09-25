@@ -8,6 +8,8 @@ import uuid
 import configparser
 from benchmark import start_server
 
+AUDIOREF_PATH = os.path.join(os.path.dirname(__file__), "../ravdess_refaudios")
+
 app = FastAPI()
 
 class Request(BaseModel):
@@ -19,7 +21,7 @@ class Request(BaseModel):
 async def generate_wav(request: Request):
     unique_filename = f"output_{uuid.uuid4().hex}"
     output_path = os.path.join(request.name, unique_filename)
-    synthesize_msg({"emo": request.emo, "text": request.text}, output_path="../tts_output/" + output_path + ".wav")
+    synthesize_msg({"emo": request.emo, "text": request.text}, output_path="../tts_output/" + output_path + ".wav", audioref_path=AUDIOREF_PATH)
     return JSONResponse(content={"wav_path": output_path})
 
 def start_http_api():
