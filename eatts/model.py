@@ -2,12 +2,19 @@ import os
 import pika
 import soundfile as sf
 import json
+import configparser
 from pika.adapters.blocking_connection import BlockingChannel
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "../resource/eatts_checkpoint/tts_model_4in1")
-AUDIOREF_PATH = os.path.join(os.path.dirname(__file__), "../iemocap_refaudios")
+
+# Read config to determine which audio reference path to use
+config = configparser.ConfigParser()
+config.read(os.path.join(os.path.dirname(__file__), "../config.ini"))
+is_benchmark = config.getboolean("baseline", "IsBenchmarkBaseline", fallback=False)
+AUDIOREF_PATH = os.path.join(os.path.dirname(__file__), "../iemocap_refaudios" if is_benchmark else "../ravdess_refaudios")
+
 SAMPLE_RATE = 22000  # 22000 32750
 
 def setup_tts(checkpoint_dir: str):
