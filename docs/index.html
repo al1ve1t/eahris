@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Text-to-Speech Based Emotion-Aware Human-Robot Dialogue System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .abstract {
+            background-color: #ffffff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .authors {
+            margin: 20px 0;
+        }
+
+        .authors a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #0366d6;
+        }
+
+        h2 {
+            color: #24292e;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <table width="100%" border="0" align="center">
+        <tr>
+            <td align="center" width="50%">
+                <img src="./uhh_klein.jpg" width="45%" alt="University of Hamburg Logo" />
+            </td>
+            <td align="center" width="50%">
+                <img src="./wtm_logo.png" width="21%" alt="WTM Logo" />
+            </td>
+        </tr>
+    </table>
+
+    <div class="center">
+        <p>
+            <a href="https://www.inf.uni-hamburg.de/en/inst/ab/wtm.html" target="_blank">Knowledge Technology Group
+                (WTM)</a>
+        </p>
+        <h5>Department of Informatics, University of Hamburg</h5>
+
+        <h4>Paper submitted to ICASSP 2026</h4>
+        <h2>TEXT-TO-SPEECH BASED EMOTION-AWARE HUMAN-ROBOT DIALOGUE SYSTEM</h2>
+
+        <div class="authors">
+            <a href="https://github.com/al1ve1t" target="_blank">Elnur Alimirzayev</a>
+            <a href="https://www.inf.uni-hamburg.de/en/inst/ab/wtm/people/kaplan.html" target="_blank">Burak Can
+                Kaplan</a>
+            <a href="https://www.inf.uni-hamburg.de/en/inst/ab/wtm/people/weber.html" target="_blank">Cornelius
+                Weber</a>
+            <a href="https://www.inf.uni-hamburg.de/en/inst/ab/wtm/people/wermter.html" target="_blank">Stefan
+                Wermter</a>
+        </div>
+    </div>
+
+    <div class="abstract">
+        <h3>Abstract</h3>
+        <p>
+            The rapid progress of large language models (LLMs) has
+            accelerated the rise of interactive AI systems, yet most remain
+            text-only and largely emotion-agnostic. Adding text-tospeech
+            (TTS) enables voice interaction, but current state-of-the-
+            art TTS models mostly offer indirect, coarse control over
+            prosody and frequently fail to realize requested emotions.
+            This mismatch between intended content and delivered tone
+            undermines user trust in high-stakes settings such as customer
+            support and healthcare. Two technical obstacles cause this
+            gap: 1) content and prosody are tightly entangled, so an inappropriate
+            emotion can degrade intelligibility, and 2) models
+            tend to express the emotions that are standard for the given
+            text. Addressing these issues is essential for emotionally coherent
+            and controllable speech in LLM-driven interactions.
+            Our approach proposes a modular human-robot interaction
+            system that integrates an emotion recognition in conversations
+            model with TTS to enable emotional awareness. Due to
+            this integration, our TTS can decide on the correct emotion to
+            answer, select appropriate reference audio to adapt its prosody
+            in each interaction, and generate speech of an ”emotionally
+            intelligent” robot. Additionally, we set a new baseline for an
+            emotional dialogue system pipeline and automated evaluation
+            of such systems.
+        </p>
+    </div>
+
+    <h3>Architecture</h3>
+    <div class="center">
+        <img src="hri.drawio.jpg" alt="Architecture Diagram" style="max-width: 100%; height: auto;" />
+    </div>
+
+    <h3>Dialogue Demos</h3>
+    <p>Link to the Demo: <a href="https://eahris.com/" target="_blank">https://eahris.com/</a></p>
+
+    <style>
+        .chat-container {
+            width: 100%;
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .chat-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            max-width: 70%;
+        }
+
+        .message.user {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-size: cover;
+            flex-shrink: 0;
+        }
+
+        .avatar.nico-neu {
+            background-image: url('icons/nico-neu.png');
+            background-color: transparent;
+            background-size: contain;
+        }
+
+        .avatar.nico-ang {
+            background-image: url('icons/nico-ang.png');
+            background-color: transparent;
+            background-size: contain;
+        }
+
+        .avatar.nico-hap {
+            background-image: url('icons/nico-hap.png');
+            background-color: transparent;
+            background-size: contain;
+        }
+
+        .avatar.nico-sad {
+            background-image: url('icons/nico-sad.png');
+            background-color: transparent;
+            background-size: contain;
+        }
+
+        .avatar.nico-exc {
+            background-image: url('icons/nico-exc.png');
+            background-color: transparent;
+            background-size: contain;
+        }
+
+        .avatar.nico-fru {
+            background-image: url('icons/nico-fru.png');
+            background-color: transparent;
+            background-size: contain;
+        }
+
+        .avatar.user {
+            background-image: url('icons/user-neu.png');
+            background-color: transparent;
+            background-size: contain;
+        }
+
+        .message-content {
+            padding: 10px 15px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .message.nico .message-content {
+            background-color: #e3f2fd;
+        }
+
+        .message.user .message-content {
+            background-color: #f5f5f5;
+        }
+
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .audio-player {
+            width: 333px;
+            height: 30px;
+            margin-top: 5px;
+        }
+
+        /* Custom audio player styling */
+        audio::-webkit-media-controls-panel {
+            background-color: #f8f9fa;
+        }
+
+        audio::-webkit-media-controls-play-button {
+            background-color: #4CAF50;
+            border-radius: 50%;
+        }
+
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: #333;
+        }
+    </style>
+
+    <!-- Anger Dialogue -->
+    <div class="chat-container">
+        <div class="chat-title">Anger Dialogue Example</div>
+        <div class="chat-messages">
+            <div class="message user">
+                <div class="avatar user"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        Hi Nico
+                    </div>
+                </div>
+            </div>
+            <div class="message nico">
+                <div class="avatar nico-neu"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        Hey Alex! What's up?
+                    </div>
+                    <audio class="audio-player" controls>
+                        <source src="wavs/angry_dialogue_1.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+            <div class="message user">
+                <div class="avatar user"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        I had a tough day and I'm a bit mad.
+                    </div>
+                </div>
+            </div>
+            <div class="message nico">
+                <div class="avatar nico-fru"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        Oh man, that sucks! Wanna talk about what happened? Maybe I can help a bit.
+                    </div>
+                    <audio class="audio-player" controls>
+                        <source src="wavs/angry_dialogue_2.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+            <div class="message user">
+                <div class="avatar user"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        No! I don't want to talk my business with you!
+                    </div>
+                </div>
+            </div>
+            <div class="message nico">
+                <div class="avatar nico-ang"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        That's cool, no worries! I'm here if you just need a distraction or wanna chat about something
+                        else. What's on your mind?!
+                    </div>
+                    <audio class="audio-player" controls>
+                        <source src="wavs/angry_dialogue_3.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Happiness Dialogue -->
+    <div class="chat-container">
+        <div class="chat-title">Happiness Dialogue Example</div>
+        <div class="chat-messages">
+            <div class="message user">
+                <div class="avatar user"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        Hi Nico, how are you?
+                    </div>
+                </div>
+            </div>
+            <div class="message nico">
+                <div class="avatar nico-hap"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        Hey Alex! I'm doing great, thanks for asking! How about you, what's up?
+                    </div>
+                    <audio class="audio-player" controls>
+                        <source src="wavs/happy_dialogue_1.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+            <div class="message user">
+                <div class="avatar user"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        I'm doing great too. I was asleep and was dreaming about winning a lottery!
+                    </div>
+                </div>
+            </div>
+            <div class="message nico">
+                <div class="avatar nico-hap"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        That's awesome! What would be the first thing you but if you actually won?
+                    </div>
+                    <audio class="audio-player" controls>
+                        <source src="wavs/happy_dialogue_2.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+            <div class="message user">
+                <div class="avatar user"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        I think I would go somewhere for a trim. Do you have some places in mind?
+                    </div>
+                </div>
+            </div>
+            <div class="message nico">
+                <div class="avatar nico-exc"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        Oh, a trip sounds fun! How about a beach vacation on Hawaii? Or exploring the streets of Tokyo?
+                        Or maybe a European gateaway to places like Paris or Rome. What kind of vibe are you thinking?
+                    </div>
+                    <audio class="audio-player" controls>
+                        <source src="wavs/happy_dialogue_3.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sadness Dialogue -->
+    <div class="chat-container">
+        <div class="chat-title">Sadness Dialogue Example</div>
+        <div class="chat-messages">
+            <div class="message user">
+                <div class="avatar user"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        Hi Nico, how are you doing?
+                    </div>
+                </div>
+            </div>
+            <div class="message nico">
+                <div class="avatar nico-hap"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        I'm feeling pretty good, Alex! Just handing out and ready to chat. How about you?
+                    </div>
+                    <audio class="audio-player" controls>
+                        <source src="wavs/sad_dialogue_1.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+            <div class="message user">
+                <div class="avatar user"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        I'm feeling sad. Just remembered my pet, which passed away a few years ago.
+                    </div>
+                </div>
+            </div>
+            <div class="message nico">
+                <div class="avatar nico-sad"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        I'm really sorry to hear that, Alex. Losing a pet is really tough. What was your pet's name?
+                        Maybe we can chat about some happy memories you had together?
+                    </div>
+                    <audio class="audio-player" controls>
+                        <source src="wavs/sad_dialogue_2.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+            <div class="message user">
+                <div class="avatar user"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        Yes thank you! It was a hamster named Phil and he passed away because of sickness..
+                    </div>
+                </div>
+            </div>
+            <div class="message nico">
+                <div class="avatar nico-sad"></div>
+                <div class="message-wrapper">
+                    <div class="message-content">
+                        Oh, Phil sounds like he was a special little guy. Hamsters do have a way of getting into our
+                        hearts quickly. Do you have any favorite memories with him you would like to share? It's nice to
+                        think about the good times.
+                    </div>
+                    <audio class="audio-player" controls>
+                        <source src="wavs/sad_dialogue_3.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

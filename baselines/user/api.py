@@ -30,13 +30,13 @@ app.add_middleware(
 
 class ChatMessage(BaseModel):
     speaker: str
-    emo: Optional[str] = None
     text: str
     def __getitem__(self, item):
         return getattr(self, item)
     
 class ChatMessageFromNICO(ChatMessage):
     speaker: str = "NICO"
+    emo: str
 
 class ChatHistoryRequest(BaseModel):
     chat_history: List[ChatMessage]
@@ -47,10 +47,8 @@ async def process_chat(request: ChatHistoryRequest):
     chat_history = request.chat_history
     name = request.name
     # Process request: run spcl and call eatts
-    llm_response = llm_client.chat(chat_history[-1]["text"], chat_history)
-    # Use a constant path for the wav file if wav_path is None
-    chat_history.append(ChatMessageFromNICO(text=llm_response.output_text))
     emo_history = spcl_client([chat_history])
+    llm_response = llm_client.chat(chat_history[-1]["text"], chat_history)
     # Make API request to localhost:8080 with text, emo, and email
     payload = {
         "text": llm_response.output_text,
@@ -64,9 +62,7 @@ async def process_chat(request: ChatHistoryRequest):
     except Exception as e:
         print(f"Error calling TTS API: {e}")
         wav_path = None
-    # Update chat history with emotion of User
-    chat_history[-1].emo = emo_history[-1]
-    chat_history[-2].emo = emo_history[-2]
+    chat_history.append(ChatMessageFromNICO(text=llm_response.output_text, emo=emo_history[-1]))
     response = {
         "chat_history": [msg.dict() for msg in chat_history],
         "name": name
